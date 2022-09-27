@@ -1,0 +1,48 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+df = pd.read_csv(r'C:\Users\aakas\Downloads\heart.csv')
+df
+df['output'].unique()
+y=df['output'] 
+X = df.drop('output', axis = 1)
+X_train, X_test, y_train, y_test = train_test_split(
+             X, y, test_size = 0.2, random_state = 0)
+y_train[0:10]
+X_train.shape,y_train.shape
+X_test.shape,y_test.shape
+X = df.drop('output', axis = 1)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler(feature_range=(0,1))
+X=scaler.fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(
+             X, y, test_size = 0.2, random_state = 0)
+X_train[0:10]
+K = []
+training = []
+test = []
+scores = {}
+  
+for k in range(2, 20):
+    clf = KNeighborsClassifier(n_neighbors = k)
+    clf.fit(X_train, y_train)
+  
+    training_score = clf.score(X_train, y_train)
+    test_score = clf.score(X_test, y_test)
+    K.append(k)
+  
+    training.append(training_score)
+    test.append(test_score)
+    scores[k] = [training_score, test_score]
+for keys, values in scores.items():
+    print(keys, ':', values)
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+model = KNeighborsClassifier(n_neighbors = 7)
+  
+model.fit(X_train, y_train)
+predicted = model.predict(X_test)
+print("The accuracy of KNN is : ", accuracy_score(y_test, predicted.round())*100, "%")
+
